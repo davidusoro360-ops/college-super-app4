@@ -1,7 +1,9 @@
 import { mockAnnouncements } from "@/mocks/announcements";
 import { mockBookHubs } from "@/mocks/bookHubs";
 import { mockClassStreams } from "@/mocks/classStreams";
+import { mockCoursemateChats } from "@/mocks/coursemateChats";
 import { mockDocuments } from "@/mocks/documents";
+import { mockFiles } from "@/mocks/files";
 import { mockJobs } from "@/mocks/jobs";
 import { mockLostAndFound } from "@/mocks/lostAndFound";
 import { mockRoommates } from "@/mocks/roommates";
@@ -12,8 +14,10 @@ import type {
   Announcement,
   BookHub,
   ClassStream,
+  CoursemateChat,
   DataSource,
   DocumentItem,
+  FileItem,
   Job,
   LostAndFoundItem,
   Roommate,
@@ -62,6 +66,14 @@ export function getLostAndFound(): LostAndFoundItem[] {
   return mockLostAndFound;
 }
 
+export function getCoursemateChats(): CoursemateChat[] {
+  return mockCoursemateChats;
+}
+
+export function getFiles(): FileItem[] {
+  return mockFiles;
+}
+
 export const mockDataSource: DataSource = {
   getStudyGroups,
   getRoommates,
@@ -73,4 +85,6 @@ export const mockDataSource: DataSource = {
   getBookHubs,
   getAnnouncements,
   getLostAndFound,
+  getCoursemateChats,
+  getFiles,
 };

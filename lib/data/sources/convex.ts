@@ -2,8 +2,10 @@ import type {
   Announcement,
   BookHub,
   ClassStream,
+  CoursemateChat,
   DataSource,
   DocumentItem,
+  FileItem,
   Job,
   LostAndFoundItem,
   Roommate,
@@ -52,6 +54,14 @@ export function getLostAndFound(): LostAndFoundItem[] {
   return [];
 }
 
+export function getCoursemateChats(): CoursemateChat[] {
+  return [];
+}
+
+export function getFiles(): FileItem[] {
+  return [];
+}
+
 export const convexDataSource: DataSource = {
   getStudyGroups,
   getRoommates,
@@ -63,4 +73,6 @@ export const convexDataSource: DataSource = {
   getBookHubs,
   getAnnouncements,
   getLostAndFound,
+  getCoursemateChats,
+  getFiles,
 };

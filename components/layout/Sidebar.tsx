@@ -5,7 +5,8 @@ import {
   Calendar, BookOpen, AlertTriangle, UtensilsCrossed,
   Building2, Trophy, Wallet, Library, CalendarClock, ChevronLeft, ChevronRight,
   Users, UserSearch, Video, GraduationCap, Briefcase, FileSignature,
-  Award, BookMarked, Megaphone, PackageSearch, FlaskConical
+  Award, BookMarked, Megaphone, PackageSearch, FlaskConical,
+  MessageSquare, FolderOpen
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -48,6 +49,8 @@ const featureNavItems = [
   { href: "/book-hubs", icon: BookMarked, label: "Book Hubs" },
   { href: "/announcements", icon: Megaphone, label: "Announcements" },
   { href: "/lost-and-found", icon: PackageSearch, label: "Lost and Found" },
+  { href: "/coursemate-chat", icon: MessageSquare, label: "Chat with Coursemates" },
+  { href: "/file-manager", icon: FolderOpen, label: "File Manager" },
 ];
 
 export function Sidebar() {

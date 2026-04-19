@@ -89,6 +89,24 @@ export interface LostAndFoundItem {
   status: string;
 }
 
+export interface CoursemateChat {
+  id: string;
+  name: string;
+  course: string;
+  lastMessage: string;
+  lastMessageAt: string;
+  unreadCount: number;
+}
+
+export interface FileItem {
+  id: string;
+  name: string;
+  type: string;
+  size: string;
+  updatedAt: string;
+  owner: string;
+}
+
 export interface DataSource {
   getStudyGroups(): StudyGroup[];
   getRoommates(): Roommate[];
@@ -100,4 +118,6 @@ export interface DataSource {
   getBookHubs(): BookHub[];
   getAnnouncements(): Announcement[];
   getLostAndFound(): LostAndFoundItem[];
+  getCoursemateChats(): CoursemateChat[];
+  getFiles(): FileItem[];
 }
