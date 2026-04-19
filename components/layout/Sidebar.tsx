@@ -1,9 +1,11 @@
 "use client";
 
-import { 
+import {
   Home, Search, User, LogOut, Moon, Sun,
   Calendar, BookOpen, AlertTriangle, UtensilsCrossed,
-  Building2, Trophy, Wallet, Library, CalendarClock, ChevronLeft, ChevronRight
+  Building2, Trophy, Wallet, Library, CalendarClock, ChevronLeft, ChevronRight,
+  Users, UserSearch, Video, GraduationCap, Briefcase, FileSignature,
+  Award, BookMarked, Megaphone, PackageSearch, FlaskConical
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,6 +13,8 @@ import { useTheme } from "next-themes";
 import { useClerk } from "@clerk/nextjs";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useRole } from "@/lib/auth";
+import { setDevMode, useDevMode } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { spring } from "@/components/motion/variants";
 
@@ -34,12 +38,24 @@ const featureNavItems = [
   { href: "/library", icon: Library, label: "Library" },
   { href: "/wallet", icon: Wallet, label: "Wallet" },
   { href: "/leaderboard", icon: Trophy, label: "Leaderboard" },
+  { href: "/study-groups", icon: Users, label: "Study Groups" },
+  { href: "/roommates", icon: UserSearch, label: "Find Roommates" },
+  { href: "/class-streams", icon: Video, label: "Class Streams" },
+  { href: "/tutorials", icon: GraduationCap, label: "Tutorials" },
+  { href: "/jobs", icon: Briefcase, label: "Jobs / Side Gigs" },
+  { href: "/sign-documents", icon: FileSignature, label: "Sign Documents" },
+  { href: "/scholarships", icon: Award, label: "Scholarships" },
+  { href: "/book-hubs", icon: BookMarked, label: "Book Hubs" },
+  { href: "/announcements", icon: Megaphone, label: "Announcements" },
+  { href: "/lost-and-found", icon: PackageSearch, label: "Lost and Found" },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const { signOut } = useClerk();
+  const { role } = useRole();
+  const isDevMode = useDevMode();
   const [collapsed, setCollapsed] = useState(false);
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
@@ -197,6 +213,44 @@ export function Sidebar() {
       </nav>
 
       <div className="p-4 border-t border-white/5 space-y-2">
+        {role === "student" && (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setDevMode(!isDevMode)}
+            aria-pressed={isDevMode}
+            className={cn(
+              "flex items-center gap-3 w-full px-3 py-2.5 rounded-xl transition-all duration-200 border",
+              isDevMode
+                ? "bg-primary-500/10 border-primary-500/20 text-primary-300 hover:bg-primary-500/15"
+                : "border-transparent text-slate-400 hover:text-white hover:bg-white/5",
+              collapsed && "justify-center"
+            )}
+          >
+            <FlaskConical className="w-5 h-5 shrink-0" />
+            <AnimatePresence>
+              {!collapsed && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-start text-left leading-tight"
+                >
+                  <span className="font-medium">Dev Mode</span>
+                  <span
+                    className={cn(
+                      "text-xs",
+                      isDevMode ? "text-primary-400" : "text-slate-500"
+                    )}
+                  >
+                    {isDevMode ? "Mock data on" : "Mock data off"}
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.button>
+        )}
+
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
