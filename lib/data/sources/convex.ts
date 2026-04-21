@@ -11,6 +11,7 @@ import type {
   Roommate,
   Scholarship,
   StudentDashboardData,
+  TimetableData,
   StudyGroup,
   Tutorial,
 } from "@/lib/data/types";
@@ -63,6 +64,13 @@ export function getFiles(): FileItem[] {
   return [];
 }
 
+export function getTimetableData(): TimetableData {
+  return {
+    weeklyTimetable: [],
+    nextClass: null,
+  };
+}
+
 export function getStudentDashboardData(): StudentDashboardData {
   return {
     todaySchedule: [],
@@ -89,5 +97,6 @@ export const convexDataSource: DataSource = {
   getLostAndFound,
   getCoursemateChats,
   getFiles,
+  getTimetableData,
   getStudentDashboardData,
 };

@@ -107,6 +107,51 @@ export interface FileItem {
   owner: string;
 }
 
+export interface TimetableCourse {
+  _id: string;
+  name: string;
+  code: string;
+}
+
+export interface TimetableClassroom {
+  _id: string;
+  name: string;
+  building: string;
+}
+
+export interface TimetableFaculty {
+  _id: string;
+  name: string;
+}
+
+export type TimetableClassType = "lecture" | "tutorial" | "lab";
+
+export interface TimetableEntry {
+  _id: string;
+  courseId: string;
+  classroomId: string;
+  facultyId: string;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+  course?: TimetableCourse | null;
+  classroom?: TimetableClassroom | null;
+  faculty?: TimetableFaculty | null;
+  type?: TimetableClassType;
+  outline?: string[];
+  resources?: string[];
+}
+
+export interface TimetableNextClass extends TimetableEntry {
+  isToday: boolean;
+  daysUntil?: number;
+}
+
+export interface TimetableData {
+  weeklyTimetable: TimetableEntry[];
+  nextClass: TimetableNextClass | null;
+}
+
 export interface StudentDashboardScheduleSlot {
   startTime: string;
   endTime: string;
@@ -171,5 +216,6 @@ export interface DataSource {
   getLostAndFound(): LostAndFoundItem[];
   getCoursemateChats(): CoursemateChat[];
   getFiles(): FileItem[];
+  getTimetableData(): TimetableData;
   getStudentDashboardData(): StudentDashboardData;
 }

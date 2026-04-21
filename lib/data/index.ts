@@ -6,7 +6,7 @@ import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { convexDataSource } from "@/lib/data/sources/convex";
 import { mockDataSource } from "@/lib/data/sources/mock";
-import type { StudentDashboardData } from "@/lib/data/types";
+import type { StudentDashboardData, TimetableData } from "@/lib/data/types";
 
 const DEV_MODE_KEY = "DEV_MODE";
 const DEV_MODE_EVENT = "dev-mode-change";
@@ -57,6 +57,57 @@ export interface UseStudentDashboardDataArgs {
   collegeId?: Id<"colleges">;
 }
 
+export interface UseTimetableDataArgs {
+  clerkUserId?: string;
+  collegeId?: Id<"colleges">;
+  ready?: boolean;
+}
+
+export function useTimetableData(
+  args: UseTimetableDataArgs | null
+): TimetableData | undefined {
+  const isDevMode = useDevMode();
+
+  const shouldLoadNextClass = !isDevMode && !!args?.clerkUserId && args?.ready !== false;
+  const shouldLoadWeeklyTimetable = shouldLoadNextClass && !!args?.collegeId;
+
+  const convexWeeklyTimetable = useQuery(
+    api.timetable.getWeeklyTimetable,
+    shouldLoadWeeklyTimetable && args?.clerkUserId && args?.collegeId
+      ? { clerkUserId: args.clerkUserId, collegeId: args.collegeId }
+      : "skip"
+  );
+
+  const convexNextClass = useQuery(
+    api.timetable.getNextClass,
+    shouldLoadNextClass && args?.clerkUserId
+      ? { clerkUserId: args.clerkUserId }
+      : "skip"
+  );
+
+  const mockData = useMemo(
+    () => (isDevMode ? mockDataSource.getTimetableData() : undefined),
+    [isDevMode]
+  );
+
+  if (isDevMode) {
+    return mockData;
+  }
+
+  if (!args?.clerkUserId || args.ready === false || !shouldLoadWeeklyTimetable) {
+    return undefined;
+  }
+
+  if (convexWeeklyTimetable === undefined || convexNextClass === undefined) {
+    return undefined;
+  }
+
+  return {
+    weeklyTimetable: convexWeeklyTimetable,
+    nextClass: convexNextClass as TimetableData["nextClass"],
+  };
+}
+
 export function useStudentDashboardData(
   args: UseStudentDashboardDataArgs | null
 ): StudentDashboardData | undefined {
@@ -94,6 +145,9 @@ export type {
   Roommate,
   Scholarship,
   StudentDashboardData,
+  TimetableData,
+  TimetableEntry,
+  TimetableNextClass,
   StudyGroup,
   Tutorial,
 } from "@/lib/data/types";

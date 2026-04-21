@@ -1,0 +1,132 @@
+import type { TimetableData, TimetableEntry } from "@/lib/data/types";
+
+const today = new Date().getDay();
+const tomorrow = (today + 1) % 7;
+const dayAfterTomorrow = (today + 2) % 7;
+
+const weeklyTimetable: TimetableEntry[] = [
+  {
+    _id: "mock-tt-1",
+    courseId: "course-cs201",
+    classroomId: "classroom-room-201",
+    facultyId: "faculty-sharma",
+    dayOfWeek: today,
+    startTime: "09:00",
+    endTime: "10:00",
+    course: { _id: "course-cs201", name: "Data Structures", code: "CS201" },
+    classroom: { _id: "classroom-room-201", name: "Room 201", building: "Block A" },
+    faculty: { _id: "faculty-sharma", name: "Dr. Sharma" },
+    type: "lecture",
+    outline: [
+      "Recap: arrays and linked lists",
+      "Introduction to stacks and queues",
+      "Applications in expression evaluation",
+      "Live walkthrough of a sample problem",
+    ],
+    resources: ["Slides", "PDF", "Video"],
+  },
+  {
+    _id: "mock-tt-2",
+    courseId: "course-ma301",
+    classroomId: "classroom-room-105",
+    facultyId: "faculty-priya",
+    dayOfWeek: today,
+    startTime: "11:00",
+    endTime: "12:00",
+    course: { _id: "course-ma301", name: "Engineering Mathematics - III", code: "MA301" },
+    classroom: { _id: "classroom-room-105", name: "Room 105", building: "Block B" },
+    faculty: { _id: "faculty-priya", name: "Prof. Priya" },
+    type: "tutorial",
+    outline: [
+      "Laplace transforms: worked examples",
+      "Common pitfalls in inverse transforms",
+      "Group problem-solving session",
+    ],
+    resources: ["Worksheet", "PDF"],
+  },
+  {
+    _id: "mock-tt-3",
+    courseId: "course-cs305",
+    classroomId: "classroom-lab-b",
+    facultyId: "faculty-reddy",
+    dayOfWeek: tomorrow,
+    startTime: "10:00",
+    endTime: "11:00",
+    course: { _id: "course-cs305", name: "Computer Networks", code: "CS305" },
+    classroom: { _id: "classroom-lab-b", name: "Lab B", building: "Tech Block" },
+    faculty: { _id: "faculty-reddy", name: "Dr. Reddy" },
+    type: "lab",
+    outline: [
+      "Packet capture with Wireshark",
+      "Analyzing TCP vs UDP traffic",
+      "Lab assignment: build a simple chat server",
+    ],
+    resources: ["Lab Manual", "Dataset", "Video"],
+  },
+  {
+    _id: "mock-tt-4",
+    courseId: "course-cs304",
+    classroomId: "classroom-room-302",
+    facultyId: "faculty-mehta",
+    dayOfWeek: dayAfterTomorrow,
+    startTime: "14:00",
+    endTime: "15:00",
+    course: { _id: "course-cs304", name: "Operating Systems", code: "CS304" },
+    classroom: { _id: "classroom-room-302", name: "Room 302", building: "Block C" },
+    faculty: { _id: "faculty-mehta", name: "Prof. Mehta" },
+    type: "lecture",
+    outline: [
+      "Process scheduling overview",
+      "Round-robin vs priority scheduling",
+      "Context switching internals",
+      "Q&A on previous assignment",
+    ],
+    resources: ["Slides", "PDF"],
+  },
+  {
+    _id: "mock-tt-5",
+    courseId: "course-cs306",
+    classroomId: "classroom-seminar-1",
+    facultyId: "faculty-rao",
+    dayOfWeek: dayAfterTomorrow,
+    startTime: "16:00",
+    endTime: "17:00",
+    course: { _id: "course-cs306", name: "Database Systems", code: "CS306" },
+    classroom: { _id: "classroom-seminar-1", name: "Seminar Hall 1", building: "Main Block" },
+    faculty: { _id: "faculty-rao", name: "Dr. Rao" },
+    type: "lecture",
+    outline: [
+      "Normalization: 1NF through BCNF",
+      "Real-world schema design examples",
+      "Common denormalization trade-offs",
+    ],
+    resources: ["Slides", "Reading", "Video"],
+  },
+];
+
+export function getMockTimetableData(): TimetableData {
+  return {
+    weeklyTimetable,
+    nextClass: {
+      _id: "mock-next-class",
+      courseId: "course-cs305",
+      classroomId: "classroom-lab-b",
+      facultyId: "faculty-reddy",
+      dayOfWeek: tomorrow,
+      startTime: "10:00",
+      endTime: "11:00",
+      isToday: false,
+      daysUntil: 1,
+      course: { _id: "course-cs305", name: "Computer Networks", code: "CS305" },
+      classroom: { _id: "classroom-lab-b", name: "Lab B", building: "Tech Block" },
+      faculty: { _id: "faculty-reddy", name: "Dr. Reddy" },
+      type: "lab",
+      outline: [
+        "Packet capture with Wireshark",
+        "Analyzing TCP vs UDP traffic",
+        "Lab assignment: build a simple chat server",
+      ],
+      resources: ["Lab Manual", "Dataset", "Video"],
+    },
+  };
+}

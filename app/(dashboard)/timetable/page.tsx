@@ -1,76 +1,51 @@
 "use client";
 
+import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { TimetableGrid } from "@/components/features/TimetableGrid";
-import { 
-  Clock, 
-  MapPin, 
-  User, 
+import { ClassDetailsModal } from "@/components/modals";
+import type { ClassBlockEntry } from "@/components/features/ClassBlock";
+import { useTimetableData } from "@/lib/data";
+import type { TimetableEntry } from "@/lib/data";
+import {
+  Clock,
   Calendar,
+  CalendarDays,
   Download,
-  Bell
+  BookOpen,
+  GraduationCap,
+  Briefcase,
 } from "lucide-react";
-
-interface TimetableEntry {
-  _id: string;
-  courseId: string;
-  classroomId: string;
-  facultyId: string;
-  dayOfWeek: number;
-  startTime: string;
-  endTime: string;
-  course?: {
-    _id: string;
-    name: string;
-    code: string;
-  } | null;
-  classroom?: {
-    _id: string;
-    name: string;
-    building: string;
-  } | null;
-  faculty?: {
-    _id: string;
-    name: string;
-  } | null;
-}
 
 export default function TimetablePage() {
   const { user } = useUser();
+  const [selectedEntry, setSelectedEntry] = useState<ClassBlockEntry | null>(null);
 
   const currentUser = useQuery(
     api.users.getUser,
     user?.id ? { clerkUserId: user.id } : "skip"
   );
 
-  const weeklyTimetable = useQuery(
-    api.timetable.getWeeklyTimetable,
-    currentUser?.collegeId
-      ? { clerkUserId: user!.id, collegeId: currentUser.collegeId }
-      : "skip"
+  const timetableData = useTimetableData(
+    user?.id
+      ? {
+          clerkUserId: user.id,
+          collegeId: currentUser?.collegeId,
+          ready: currentUser !== undefined,
+        }
+      : null
   );
 
-  const nextClass = useQuery(
-    api.timetable.getNextClass,
-    user?.id ? { clerkUserId: user.id } : "skip"
-  );
+  const weeklyTimetable = timetableData?.weeklyTimetable;
 
-  const isStaff = currentUser?.role === "faculty" || 
-                  currentUser?.role === "admin" || 
+  const isStaff = currentUser?.role === "faculty" ||
+                  currentUser?.role === "admin" ||
                   currentUser?.role === "hostelAdmin" ||
                   currentUser?.role === "canteenAdmin";
-
-  const formatTime = (time: string) => {
-    const [hours, minutes] = time.split(":");
-    const hour = parseInt(hours);
-    const ampm = hour >= 12 ? "PM" : "AM";
-    const displayHour = hour % 12 || 12;
-    return `${displayHour}:${minutes} ${ampm}`;
-  };
 
   if (!user) {
     return (
@@ -83,12 +58,16 @@ export default function TimetablePage() {
   return (
     <div className="p-4 md:p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 text-[10.5px] font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-[0.14em]">
+            <CalendarDays className="w-3.5 h-3.5" />
+            This Week
+          </div>
+          <h1 className="text-2xl md:text-[28px] font-bold text-slate-900 dark:text-slate-100 leading-tight">
             Timetable
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
-            {currentUser?.role === "faculty" 
+          <p className="text-slate-500 dark:text-slate-400 text-sm">
+            {currentUser?.role === "faculty"
               ? "Your teaching schedule for the week"
               : "Your class schedule for the week"}
           </p>
@@ -108,68 +87,33 @@ export default function TimetablePage() {
         </div>
       </div>
 
-      {nextClass && (
-        <Card className="p-4 bg-gradient-to-r from-indigo-500 to-purple-600 border-0 text-white">
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-white/20 rounded-xl">
-              <Clock className="w-6 h-6" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="px-2 py-0.5 bg-white/20 rounded-full text-xs font-medium">
-                  {nextClass.isToday ? "Today" : `In ${'daysUntil' in nextClass ? nextClass.daysUntil : 1} day${'daysUntil' in nextClass && nextClass.daysUntil > 1 ? "s" : ""}`}
-                </span>
-              </div>
-              <h3 className="text-xl font-semibold">
-                {nextClass.course?.name || "Unknown Course"}
-              </h3>
-              <div className="flex flex-wrap items-center gap-4 mt-2 text-white/80 text-sm">
-                <span className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  {formatTime(nextClass.startTime)} - {formatTime(nextClass.endTime)}
-                </span>
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-4 h-4" />
-                  {nextClass.classroom?.name || "TBA"}, {nextClass.classroom?.building || ""}
-                </span>
-                {currentUser?.role !== "faculty" && (nextClass as { faculty?: { name: string } }).faculty && (
-                  <span className="flex items-center gap-1">
-                    <User className="w-4 h-4" />
-                    {(nextClass as { faculty?: { name: string } }).faculty?.name}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="hidden md:block">
-              <Button variant="ghost" className="text-white hover:bg-white/20">
-                <Bell className="w-4 h-4 mr-2" />
-                Set Reminder
-              </Button>
-            </div>
-          </div>
-        </Card>
-      )}
-
       {weeklyTimetable === undefined ? (
-        <Card className="p-8 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="text-slate-500 dark:text-slate-400 mt-4">
-            Loading your timetable...
+        <Card className="p-10 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-indigo-500/10 mb-4">
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
+          </div>
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
+            Loading your timetable
+          </p>
+          <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
+            Just a moment…
           </p>
         </Card>
       ) : weeklyTimetable.length === 0 ? (
-        <Card className="p-8 text-center">
-          <Calendar className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-          <p className="text-slate-500 dark:text-slate-400">
-            No timetable entries found
+        <Card className="p-10 text-center">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-800/60 mb-4">
+            <Calendar className="w-6 h-6 text-slate-400 dark:text-slate-500" />
+          </div>
+          <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+            No timetable entries yet
           </p>
-          <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-500 mt-1 max-w-xs mx-auto">
             {currentUser?.role === "student"
-              ? "Your class schedule will appear here once configured"
-              : "Create timetable entries to get started"}
+              ? "Your class schedule will appear here once it's configured."
+              : "Create timetable entries to get started."}
           </p>
           {isStaff && (
-            <Button variant="primary" className="mt-4">
+            <Button variant="primary" size="sm" className="mt-5">
               Create Timetable Entry
             </Button>
           )}
@@ -187,52 +131,87 @@ export default function TimetablePage() {
             course: entry.course,
             classroom: entry.classroom,
             faculty: entry.faculty,
+            type: entry.type,
+            outline: entry.outline,
+            resources: entry.resources,
           }))}
-          onEntryClick={(entry) => {
-            console.log("Entry clicked:", entry);
-          }}
+          onEntryClick={(entry) => setSelectedEntry(entry)}
         />
       )}
 
-      <Card className="p-4">
-        <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">
-          Quick Stats
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg">
-            <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+      <Card className="p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100">
+            Weekly Overview
+          </h3>
+          <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-[0.12em]">
+            At a glance
+          </span>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="relative overflow-hidden p-4 rounded-xl bg-gradient-to-br from-indigo-500/[0.08] to-transparent border border-indigo-500/15 dark:border-indigo-500/20">
+            <div className="flex items-center justify-between mb-2.5">
+              <div className="p-1.5 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                <BookOpen className="w-4 h-4" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold tabular-nums text-slate-900 dark:text-slate-100 leading-none">
               {weeklyTimetable?.length ?? 0}
             </p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 font-medium">
               Total Classes
             </p>
           </div>
-          <div className="text-center p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg">
-            <p className="text-2xl font-bold text-teal-600 dark:text-teal-400">
+
+          <div className="relative overflow-hidden p-4 rounded-xl bg-gradient-to-br from-teal-500/[0.08] to-transparent border border-teal-500/15 dark:border-teal-500/20">
+            <div className="flex items-center justify-between mb-2.5">
+              <div className="p-1.5 rounded-md bg-teal-500/10 text-teal-600 dark:text-teal-400">
+                <Clock className="w-4 h-4" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold tabular-nums text-slate-900 dark:text-slate-100 leading-none">
               {(weeklyTimetable as TimetableEntry[] | undefined)?.filter((e) => e.dayOfWeek === new Date().getDay()).length ?? 0}
             </p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 font-medium">
               Today&apos;s Classes
             </p>
           </div>
-          <div className="text-center p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg">
-            <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+
+          <div className="relative overflow-hidden p-4 rounded-xl bg-gradient-to-br from-purple-500/[0.08] to-transparent border border-purple-500/15 dark:border-purple-500/20">
+            <div className="flex items-center justify-between mb-2.5">
+              <div className="p-1.5 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                <GraduationCap className="w-4 h-4" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold tabular-nums text-slate-900 dark:text-slate-100 leading-none">
               {new Set((weeklyTimetable as TimetableEntry[] | undefined)?.map((e) => e.courseId)).size ?? 0}
             </p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 font-medium">
               Unique Courses
             </p>
           </div>
-          <div className="text-center p-3 bg-slate-50 dark:bg-slate-700/30 rounded-lg">
-            <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+
+          <div className="relative overflow-hidden p-4 rounded-xl bg-gradient-to-br from-orange-500/[0.08] to-transparent border border-orange-500/15 dark:border-orange-500/20">
+            <div className="flex items-center justify-between mb-2.5">
+              <div className="p-1.5 rounded-md bg-orange-500/10 text-orange-600 dark:text-orange-400">
+                <Briefcase className="w-4 h-4" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold tabular-nums text-slate-900 dark:text-slate-100 leading-none">
               {(weeklyTimetable as TimetableEntry[] | undefined)?.filter((e) => e.dayOfWeek >= 1 && e.dayOfWeek <= 5).length ?? 0}
             </p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 font-medium">
               Weekday Classes
             </p>
           </div>
         </div>
       </Card>
+
+      <ClassDetailsModal
+        isOpen={selectedEntry !== null}
+        onClose={() => setSelectedEntry(null)}
+        entry={selectedEntry}
+      />
     </div>
   );
 }

@@ -4,3 +4,4 @@ export { EditEventModal } from "./EditEventModal";
 export { AddBookModal } from "./AddBookModal";
 export { UploadResourceModal } from "./UploadResourceModal";
 export { BookClassroomModal } from "./BookClassroomModal";
+export { ClassDetailsModal } from "./ClassDetailsModal";
