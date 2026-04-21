@@ -93,7 +93,7 @@ export function Sidebar() {
                 exit={{ opacity: 0, x: -10 }}
                 className="font-bold text-xl bg-gradient-to-r from-primary-400 to-accent-400 bg-clip-text text-transparent"
               >
-                MySRKR
+                Raven
               </motion.span>
             )}
           </AnimatePresence>

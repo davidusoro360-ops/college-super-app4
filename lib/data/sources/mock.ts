@@ -8,6 +8,7 @@ import { mockJobs } from "@/mocks/jobs";
 import { mockLostAndFound } from "@/mocks/lostAndFound";
 import { mockRoommates } from "@/mocks/roommates";
 import { mockScholarships } from "@/mocks/scholarships";
+import { mockStudentDashboard } from "@/mocks/studentDashboard";
 import { mockStudyGroups } from "@/mocks/studyGroups";
 import { mockTutorials } from "@/mocks/tutorials";
 import type {
@@ -22,6 +23,7 @@ import type {
   LostAndFoundItem,
   Roommate,
   Scholarship,
+  StudentDashboardData,
   StudyGroup,
   Tutorial,
 } from "@/lib/data/types";
@@ -74,6 +76,10 @@ export function getFiles(): FileItem[] {
   return mockFiles;
 }
 
+export function getStudentDashboardData(): StudentDashboardData {
+  return mockStudentDashboard;
+}
+
 export const mockDataSource: DataSource = {
   getStudyGroups,
   getRoommates,
@@ -87,4 +93,5 @@ export const mockDataSource: DataSource = {
   getLostAndFound,
   getCoursemateChats,
   getFiles,
+  getStudentDashboardData,
 };

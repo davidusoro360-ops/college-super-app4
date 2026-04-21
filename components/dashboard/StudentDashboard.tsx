@@ -1,8 +1,7 @@
 "use client";
 
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { useCurrentUser } from "@/lib/auth";
+import { useStudentDashboardData } from "@/lib/data";
 import { Id } from "@/convex/_generated/dataModel";
 import { motion } from "framer-motion";
 import {
@@ -31,11 +30,10 @@ export function StudentDashboard() {
   const { profile } = useCurrentUser();
   const collegeId = profile?.collegeId as Id<"colleges"> | undefined;
 
-  const dashboardData = useQuery(
-    api.dashboard.getStudentDashboard,
+  const dashboardData = useStudentDashboardData(
     profile?.clerkUserId && collegeId
       ? { clerkUserId: profile.clerkUserId, collegeId }
-      : "skip"
+      : null
   );
 
   if (!profile) return null;

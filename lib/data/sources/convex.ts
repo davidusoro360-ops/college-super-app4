@@ -10,6 +10,7 @@ import type {
   LostAndFoundItem,
   Roommate,
   Scholarship,
+  StudentDashboardData,
   StudyGroup,
   Tutorial,
 } from "@/lib/data/types";
@@ -62,6 +63,19 @@ export function getFiles(): FileItem[] {
   return [];
 }
 
+export function getStudentDashboardData(): StudentDashboardData {
+  return {
+    todaySchedule: [],
+    attendanceStats: { total: 0, present: 0, absent: 0, late: 0 },
+    pendingTickets: [],
+    upcomingEvents: [],
+    walletBalance: 0,
+    walletStatus: "active",
+    activeOrders: [],
+    borrowedBooks: [],
+  };
+}
+
 export const convexDataSource: DataSource = {
   getStudyGroups,
   getRoommates,
@@ -75,4 +89,5 @@ export const convexDataSource: DataSource = {
   getLostAndFound,
   getCoursemateChats,
   getFiles,
+  getStudentDashboardData,
 };

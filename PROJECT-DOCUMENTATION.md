@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**MySRKR - College Super App** is a comprehensive campus management platform designed for students, faculty, and administrators. It provides an all-in-one solution for managing campus activities, resources, events, and communications.
+**Raven - College Super App** is a comprehensive campus management platform designed for students, faculty, and administrators. It provides an all-in-one solution for managing campus activities, resources, events, and communications.
 
 - **Live URL**: https://college-super-app.vercel.app
 - **Repository**: https://github.com/agentzerodev-lang/college-super-app

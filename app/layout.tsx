@@ -18,7 +18,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MySRKR - College Super App",
+  title: "Raven - College Super App",
   description: "All-in-one campus companion for students, faculty, and administrators",
   icons: {
     icon: "/favicon.ico",

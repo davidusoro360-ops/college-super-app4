@@ -1,8 +1,12 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { convexDataSource } from "@/lib/data/sources/convex";
 import { mockDataSource } from "@/lib/data/sources/mock";
+import type { StudentDashboardData } from "@/lib/data/types";
 
 const DEV_MODE_KEY = "DEV_MODE";
 const DEV_MODE_EVENT = "dev-mode-change";
@@ -48,6 +52,35 @@ export function getDataSource(devMode = getDevMode()) {
   return devMode ? mockDataSource : convexDataSource;
 }
 
+export interface UseStudentDashboardDataArgs {
+  clerkUserId?: string;
+  collegeId?: Id<"colleges">;
+}
+
+export function useStudentDashboardData(
+  args: UseStudentDashboardDataArgs | null
+): StudentDashboardData | undefined {
+  const isDevMode = useDevMode();
+
+  const convexData = useQuery(
+    api.dashboard.getStudentDashboard,
+    !isDevMode && args?.clerkUserId && args?.collegeId
+      ? { clerkUserId: args.clerkUserId, collegeId: args.collegeId }
+      : "skip"
+  );
+
+  const mockData = useMemo(
+    () => (isDevMode ? mockDataSource.getStudentDashboardData() : undefined),
+    [isDevMode]
+  );
+
+  if (isDevMode) {
+    return mockData;
+  }
+
+  return convexData as StudentDashboardData | undefined;
+}
+
 export type {
   Announcement,
   BookHub,
@@ -60,6 +93,7 @@ export type {
   LostAndFoundItem,
   Roommate,
   Scholarship,
+  StudentDashboardData,
   StudyGroup,
   Tutorial,
 } from "@/lib/data/types";
