@@ -8,8 +8,6 @@ import { UniversalSearch } from "@/components/search/UniversalSearch";
 import { 
   TrendingUp, 
   Calendar, 
-  FileText, 
-  Book, 
   Ticket,
   Clock,
   ArrowRight
@@ -31,20 +29,6 @@ export default function SearchPage() {
       : "skip"
   );
 
-  const popularResources = useQuery(
-    api.resources.getPopular,
-    currentUser?.collegeId
-      ? { collegeId: currentUser.collegeId, clerkUserId: user!.id, limit: 3 }
-      : "skip"
-  );
-
-  const recentBooks = useQuery(
-    api.library.getBooks,
-    currentUser?.collegeId
-      ? { clerkUserId: user!.id, collegeId: currentUser.collegeId, limit: 3 }
-      : "skip"
-  );
-
   if (!user || !currentUser) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -60,20 +44,6 @@ export default function SearchPage() {
       href: "/events",
       color: "text-purple-600 dark:text-purple-400",
       bgColor: "bg-purple-100 dark:bg-purple-900/30",
-    },
-    {
-      icon: FileText,
-      label: "Resources",
-      href: "/resources",
-      color: "text-blue-600 dark:text-blue-400",
-      bgColor: "bg-blue-100 dark:bg-blue-900/30",
-    },
-    {
-      icon: Book,
-      label: "Library",
-      href: "/library",
-      color: "text-green-600 dark:text-green-400",
-      bgColor: "bg-green-100 dark:bg-green-900/30",
     },
     {
       icon: Ticket,
@@ -99,7 +69,7 @@ export default function SearchPage() {
           Search
         </h1>
         <p className="text-slate-500 dark:text-slate-400">
-          Find events, resources, books, and tickets across the platform
+          Find events and tickets across the platform
         </p>
       </div>
 
@@ -181,98 +151,6 @@ export default function SearchPage() {
         </div>
       )}
 
-      {popularResources && popularResources.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                Popular Resources
-              </h2>
-            </div>
-            <Link
-              href="/resources"
-              className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
-            >
-              View all
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-          <div className="space-y-3">
-            {popularResources.map((resource) => (
-              <Link
-                key={resource._id}
-                href={`/resources?id=${resource._id}`}
-                className="block"
-              >
-                <Card className="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="font-medium text-slate-900 dark:text-slate-100">
-                        {resource.title}
-                      </h3>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                        <span className="capitalize">{resource.type}</span>
-                        {resource.downloadCount && (
-                          <span> · {resource.downloadCount} downloads</span>
-                        )}
-                      </p>
-                    </div>
-                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 capitalize">
-                      {resource.type}
-                    </span>
-                  </div>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {recentBooks && recentBooks.length > 0 && (
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Book className="w-5 h-5 text-green-600 dark:text-green-400" />
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                Library Books
-              </h2>
-            </div>
-            <Link
-              href="/library"
-              className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
-            >
-              View all
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-          <div className="space-y-3">
-            {recentBooks.map((book) => (
-              <Link
-                key={book._id}
-                href={`/library?id=${book._id}`}
-                className="block"
-              >
-                <Card className="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="font-medium text-slate-900 dark:text-slate-100">
-                        {book.title}
-                      </h3>
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                        by {book.author}
-                      </p>
-                    </div>
-                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
-                      {book.availableCopies} available
-                    </span>
-                  </div>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

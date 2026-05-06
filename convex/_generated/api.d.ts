@@ -10,7 +10,9 @@
 
 import type * as attendance from "../attendance.js";
 import type * as auth from "../auth.js";
+import type * as bookhub from "../bookhub.js";
 import type * as canteen from "../canteen.js";
+import type * as courseMaterials from "../courseMaterials.js";
 import type * as dashboard from "../dashboard.js";
 import type * as events from "../events.js";
 import type * as hostel from "../hostel.js";
@@ -33,7 +35,9 @@ import type {
 declare const fullApi: ApiFromModules<{
   attendance: typeof attendance;
   auth: typeof auth;
+  bookhub: typeof bookhub;
   canteen: typeof canteen;
+  courseMaterials: typeof courseMaterials;
   dashboard: typeof dashboard;
   events: typeof events;
   hostel: typeof hostel;

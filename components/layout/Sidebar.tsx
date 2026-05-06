@@ -2,8 +2,8 @@
 
 import {
   Home, Search, User, LogOut, Moon, Sun,
-  Calendar, BookOpen, AlertTriangle, UtensilsCrossed,
-  Building2, Trophy, Wallet, Library, CalendarClock, ChevronLeft, ChevronRight,
+  Calendar, AlertTriangle, UtensilsCrossed,
+  Building2, Trophy, Wallet, CalendarClock, ChevronLeft, ChevronRight,
   Users, UserSearch, Video, GraduationCap, Briefcase, FileSignature,
   Award, BookMarked, Megaphone, PackageSearch, FlaskConical,
   MessageSquare, FolderOpen
@@ -26,17 +26,14 @@ const mainNavItems = [
 ];
 
 const featureNavItems = [
-  { href: "/attendance", icon: Calendar, label: "Attendance" },
   { href: "/timetable", icon: CalendarClock, label: "Timetable" },
   { href: "/classrooms", icon: Building2, label: "Free Rooms" },
-  { href: "/resources", icon: BookOpen, label: "Resources" },
   { href: "/tickets", icon: AlertTriangle, label: "Tickets" },
   { href: "/sos", icon: AlertTriangle, label: "SOS" },
   { href: "/hostel", icon: Building2, label: "Hostel" },
   { href: "/canteen", icon: UtensilsCrossed, label: "Canteen" },
   { href: "/playground", icon: Trophy, label: "Playground" },
   { href: "/events", icon: Calendar, label: "Events" },
-  { href: "/library", icon: Library, label: "Library" },
   { href: "/wallet", icon: Wallet, label: "Wallet" },
   { href: "/leaderboard", icon: Trophy, label: "Leaderboard" },
   { href: "/study-groups", icon: Users, label: "Study Groups" },

@@ -3,11 +3,8 @@ import { redirect } from "next/navigation";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
 import { 
   GraduationCap, 
-  CalendarCheck, 
-  BookOpen, 
   Utensils, 
   ShieldAlert, 
-  Library, 
   Clock,
   ChevronRight,
   Sparkles
@@ -15,32 +12,11 @@ import {
 
 const features = [
   {
-    icon: CalendarCheck,
-    title: "Attendance",
-    description: "Track your attendance with real-time insights and alerts",
-    color: "from-emerald-500/20 to-teal-500/20",
-    iconColor: "text-emerald-400"
-  },
-  {
-    icon: BookOpen,
-    title: "Resources",
-    description: "Access study materials, notes, and course content",
-    color: "from-blue-500/20 to-cyan-500/20",
-    iconColor: "text-blue-400"
-  },
-  {
     icon: Utensils,
     title: "Canteen",
     description: "Browse menus, order food, and manage your meal plans",
     color: "from-orange-500/20 to-amber-500/20",
     iconColor: "text-orange-400"
-  },
-  {
-    icon: Library,
-    title: "Library",
-    description: "Reserve books, track due dates, and manage loans",
-    color: "from-violet-500/20 to-purple-500/20",
-    iconColor: "text-violet-400"
   },
   {
     icon: Clock,
@@ -114,8 +90,8 @@ export default async function HomePage() {
 
             {/* Subtitle */}
             <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: "0.1s" }}>
-              Streamline your college experience with attendance tracking, resource access, 
-              canteen ordering, library management, and more — all in one place.
+              Streamline your college experience with smart schedules, canteen ordering,
+              events, support, and campus tools — all in one place.
             </p>
 
             {/* CTA Buttons */}

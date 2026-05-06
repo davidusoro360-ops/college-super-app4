@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Card } from "@/components/ui/Card";
@@ -44,10 +44,16 @@ export function UploadResourceModal({
   const [description, setDescription] = useState("");
   const [type, setType] = useState<"document" | "video" | "link" | "image" | "other">("document");
   const [url, setUrl] = useState("");
+  const [bookId, setBookId] = useState("");
+  const [fileType, setFileType] = useState("");
   const [tags, setTags] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const createResource = useMutation(api.resources.create);
+  const books = useQuery(
+    api.library.getBooks,
+    clerkUserId && collegeId ? { clerkUserId, collegeId, limit: 100 } : "skip"
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,13 +61,19 @@ export function UploadResourceModal({
 
     setIsSubmitting(true);
     try {
+      const normalizedUrl = url.trim();
+      const normalizedFileType =
+        fileType.trim() || (normalizedUrl.toLowerCase().includes(".pdf") ? "pdf" : undefined);
+
       await createResource({
         clerkUserId,
         title: title.trim(),
         description: description.trim() || undefined,
         type,
-        url: url.trim(),
+        url: normalizedUrl,
         collegeId,
+        bookId: bookId ? (bookId as Id<"books">) : undefined,
+        fileType: normalizedFileType,
         tags: tags.trim() ? tags.split(",").map((t) => t.trim()) : undefined,
       });
 
@@ -69,6 +81,8 @@ export function UploadResourceModal({
       setDescription("");
       setType("document");
       setUrl("");
+      setBookId("");
+      setFileType("");
       setTags("");
       onSuccess?.();
       onClose();
@@ -149,6 +163,40 @@ export function UploadResourceModal({
                 className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary"
                 placeholder="https://example.com/resource"
                 required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                Link to BookHub Book
+              </label>
+              <select
+                value={bookId}
+                onChange={(e) => setBookId(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary"
+              >
+                <option value="">No linked book</option>
+                {books?.map((book) => (
+                  <option key={book._id} value={book._id}>
+                    {book.title} — {book.author}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-slate-500 mt-1">
+                Linking a PDF to a book makes it available inside BookHub.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                File Type
+              </label>
+              <input
+                type="text"
+                value={fileType}
+                onChange={(e) => setFileType(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary"
+                placeholder="pdf, docx, mp4..."
               />
             </div>
 

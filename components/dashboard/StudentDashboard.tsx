@@ -11,9 +11,7 @@ import {
   PartyPopper,
   Wallet,
   AlertTriangle,
-  CheckCircle,
   Utensils,
-  Library,
   ChevronRight,
   Sparkles,
 } from "lucide-react";
@@ -57,12 +55,6 @@ export function StudentDashboard() {
           color: "primary" as const,
         },
         {
-          label: "Attendance Today",
-          value: `${dashboardData.attendanceStats.present}/${dashboardData.attendanceStats.total}`,
-          icon: CheckCircle,
-          color: "success" as const,
-        },
-        {
           label: "Pending Tickets",
           value: dashboardData.pendingTickets.length,
           icon: Ticket,
@@ -86,13 +78,6 @@ export function StudentDashboard() {
       color: "primary" as const,
     },
     {
-      title: "Attendance",
-      description: "Check your attendance",
-      icon: CheckCircle,
-      href: "/attendance",
-      color: "success" as const,
-    },
-    {
       title: "Canteen",
       description: "Order food online",
       icon: Utensils,
@@ -100,16 +85,6 @@ export function StudentDashboard() {
       color: "warning" as const,
       badge: dashboardData?.activeOrders?.length
         ? `${dashboardData.activeOrders.length} active`
-        : undefined,
-    },
-    {
-      title: "Library",
-      description: "Browse and borrow books",
-      icon: Library,
-      href: "/library",
-      color: "purple" as const,
-      badge: dashboardData?.borrowedBooks?.length
-        ? `${dashboardData.borrowedBooks.length} borrowed`
         : undefined,
     },
     {

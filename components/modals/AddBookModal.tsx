@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2, Book, User, Hash, MapPin, Package } from "lucide-react";
@@ -29,10 +29,15 @@ export function AddBookModal({ isOpen, onClose, collegeId, clerkUserId, onSucces
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [courseId, setCourseId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const addBook = useMutation(api.library.addBook);
+  const courses = useQuery(
+    api.timetable.getAllCourses,
+    clerkUserId && collegeId ? { clerkUserId, collegeId } : "skip"
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +69,8 @@ export function AddBookModal({ isOpen, onClose, collegeId, clerkUserId, onSucces
         location: location.trim() || undefined,
         description: description.trim() || undefined,
         imageUrl: imageUrl.trim() || undefined,
+        coverUrl: imageUrl.trim() || undefined,
+        courseId: courseId ? (courseId as Id<"courses">) : undefined,
       });
 
       setTitle("");
@@ -76,6 +83,7 @@ export function AddBookModal({ isOpen, onClose, collegeId, clerkUserId, onSucces
       setLocation("");
       setDescription("");
       setImageUrl("");
+      setCourseId("");
       onSuccess?.();
       onClose();
     } catch (err) {
@@ -161,6 +169,27 @@ export function AddBookModal({ isOpen, onClose, collegeId, clerkUserId, onSucces
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                      Linked Course
+                    </label>
+                    <select
+                      value={courseId}
+                      onChange={(e) => setCourseId(e.target.value)}
+                      className="w-full rounded-xl px-4 py-3 bg-dark-800/50 border border-white/10 text-white focus:outline-none focus:ring-2 focus:ring-primary-500/50"
+                    >
+                      <option value="">Select course for BookHub (optional)</option>
+                      {courses?.map((course) => (
+                        <option key={course._id} value={course._id} className="bg-dark-800">
+                          {course.code} - {course.name}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-1 text-xs text-slate-500">
+                      BookHub recommends this book when the course appears in a timetable.
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">

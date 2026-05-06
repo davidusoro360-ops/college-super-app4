@@ -1,6 +1,6 @@
 import type {
   Announcement,
-  BookHub,
+  BookHubCourseGroup,
   ClassStream,
   CoursemateChat,
   DataSource,
@@ -44,7 +44,7 @@ export function getScholarships(): Scholarship[] {
   return [];
 }
 
-export function getBookHubs(): BookHub[] {
+export function getBookHubs(): BookHubCourseGroup[] {
   return [];
 }
 

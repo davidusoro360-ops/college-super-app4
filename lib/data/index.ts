@@ -134,7 +134,8 @@ export function useStudentDashboardData(
 
 export type {
   Announcement,
-  BookHub,
+  BookHubBook,
+  BookHubCourseGroup,
   ClassStream,
   CoursemateChat,
   DataSource,

@@ -82,9 +82,21 @@ export const addBook = mutation({
     location: v.optional(v.string()),
     description: v.optional(v.string()),
     imageUrl: v.optional(v.string()),
+    coverUrl: v.optional(v.string()),
+    courseId: v.optional(v.id("courses")),
   },
   handler: async (ctx, args) => {
     requireRole(await getAuth(ctx, args.clerkUserId), ADMIN_ONLY);
+
+    if (args.courseId) {
+      const course = await ctx.db.get(args.courseId);
+      if (!course) {
+        throw new Error("Course not found");
+      }
+      if (course.collegeId !== args.collegeId) {
+        throw new Error("Book and course must belong to the same college");
+      }
+    }
     
     const now = Date.now();
     
@@ -101,6 +113,8 @@ export const addBook = mutation({
       location: args.location,
       description: args.description,
       imageUrl: args.imageUrl,
+      coverUrl: args.coverUrl || args.imageUrl,
+      courseId: args.courseId,
       status: "available",
       createdAt: now,
     });
@@ -123,6 +137,8 @@ export const updateBook = mutation({
     location: v.optional(v.string()),
     description: v.optional(v.string()),
     imageUrl: v.optional(v.string()),
+    coverUrl: v.optional(v.string()),
+    courseId: v.optional(v.id("courses")),
     status: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
@@ -131,6 +147,16 @@ export const updateBook = mutation({
     const book = await ctx.db.get(args.bookId);
     if (!book) {
       throw new Error("Book not found");
+    }
+
+    if (args.courseId) {
+      const course = await ctx.db.get(args.courseId);
+      if (!course) {
+        throw new Error("Course not found");
+      }
+      if (course.collegeId !== book.collegeId) {
+        throw new Error("Book and course must belong to the same college");
+      }
     }
     
     const updates: any = {};
@@ -144,6 +170,8 @@ export const updateBook = mutation({
     if (args.location !== undefined) updates.location = args.location;
     if (args.description !== undefined) updates.description = args.description;
     if (args.imageUrl !== undefined) updates.imageUrl = args.imageUrl;
+    if (args.coverUrl !== undefined) updates.coverUrl = args.coverUrl;
+    if (args.courseId !== undefined) updates.courseId = args.courseId;
     if (args.status !== undefined) updates.status = args.status;
     
     if (args.totalCopies !== undefined) {

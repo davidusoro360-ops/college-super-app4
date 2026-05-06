@@ -63,13 +63,19 @@ export interface Scholarship {
   eligibility: string;
 }
 
-export interface BookHub {
+export interface BookHubCourseGroup {
+  courseId: string;
+  courseName: string;
+  books: BookHubBook[];
+}
+
+export interface BookHubBook {
   id: string;
   title: string;
-  owner: string;
-  subject: string;
-  condition: string;
-  type: "swap" | "lend" | "sell";
+  author: string;
+  coverUrl?: string;
+  hasPdf: boolean;
+  pdfUrl?: string;
 }
 
 export interface Announcement {
@@ -211,7 +217,7 @@ export interface DataSource {
   getJobs(): Job[];
   getDocuments(): DocumentItem[];
   getScholarships(): Scholarship[];
-  getBookHubs(): BookHub[];
+  getBookHubs(): BookHubCourseGroup[];
   getAnnouncements(): Announcement[];
   getLostAndFound(): LostAndFoundItem[];
   getCoursemateChats(): CoursemateChat[];

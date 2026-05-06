@@ -7,11 +7,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import {
   Calendar,
   Clock,
-  Users,
   Ticket,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
   ChevronRight,
   BookOpen,
 } from "lucide-react";
@@ -51,40 +47,15 @@ export function FacultyDashboard() {
           color: "primary" as const,
         },
         {
-          label: "Attendance Marked",
-          value: `${dashboardData.attendanceStats.today.present}/${dashboardData.attendanceStats.today.total}`,
-          icon: CheckCircle,
-          color: "success" as const,
-        },
-        {
           label: "Assigned Tickets",
           value: dashboardData.assignedTickets.length,
           icon: Ticket,
           color: "warning" as const,
         },
-        {
-          label: "Overall Attendance",
-          value: dashboardData.attendanceStats.overall.total
-            ? `${Math.round(
-                (dashboardData.attendanceStats.overall.present /
-                  dashboardData.attendanceStats.overall.total) *
-                  100
-              )}%`
-            : "N/A",
-          icon: Users,
-          color: "accent" as const,
-        },
       ]
     : [];
 
   const quickActions = [
-    {
-      title: "Mark Attendance",
-      description: "Record student attendance",
-      icon: CheckCircle,
-      href: "/attendance/mark",
-      color: "success" as const,
-    },
     {
       title: "My Schedule",
       description: "View teaching timetable",
@@ -216,62 +187,6 @@ export function FacultyDashboard() {
           )}
         </div>
 
-        <div className="card">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-slate-900 dark:text-slate-100">
-              Today&apos;s Attendance
-            </h2>
-            <Link
-              href="/attendance"
-              className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
-            >
-              Details <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
-          {isLoading ? (
-            <div className="animate-pulse space-y-4">
-              <div className="h-20 bg-slate-200 dark:bg-slate-700 rounded-lg" />
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-emerald-50 dark:bg-emerald-950 rounded-lg">
-                  <CheckCircle className="w-6 h-6 text-emerald-600 dark:text-emerald-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                    {dashboardData?.attendanceStats?.today?.present || 0}
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Present
-                  </p>
-                </div>
-                <div className="text-center p-4 bg-rose-50 dark:bg-rose-950 rounded-lg">
-                  <XCircle className="w-6 h-6 text-rose-600 dark:text-rose-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-rose-600 dark:text-rose-400">
-                    {dashboardData?.attendanceStats?.today?.absent || 0}
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Absent
-                  </p>
-                </div>
-                <div className="text-center p-4 bg-amber-50 dark:bg-amber-950 rounded-lg">
-                  <AlertCircle className="w-6 h-6 text-amber-600 dark:text-amber-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
-                    {dashboardData?.attendanceStats?.today?.late || 0}
-                  </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Late
-                  </p>
-                </div>
-              </div>
-              <Link
-                href="/attendance/mark"
-                className="block w-full py-3 text-center btn-primary"
-              >
-                Mark Attendance
-              </Link>
-            </div>
-          )}
-        </div>
       </div>
 
       {dashboardData?.assignedTickets?.length ? (

@@ -1,5 +1,5 @@
 import { mockAnnouncements } from "@/mocks/announcements";
-import { mockBookHubs } from "@/mocks/bookHubs";
+import { getBookHubs as getMockBookHubs } from "@/mocks/bookHubs";
 import { mockClassStreams } from "@/mocks/classStreams";
 import { mockCoursemateChats } from "@/mocks/coursemateChats";
 import { mockDocuments } from "@/mocks/documents";
@@ -14,7 +14,7 @@ import { mockStudyGroups } from "@/mocks/studyGroups";
 import { mockTutorials } from "@/mocks/tutorials";
 import type {
   Announcement,
-  BookHub,
+  BookHubCourseGroup,
   ClassStream,
   CoursemateChat,
   DataSource,
@@ -58,8 +58,8 @@ export function getScholarships(): Scholarship[] {
   return mockScholarships;
 }
 
-export function getBookHubs(): BookHub[] {
-  return mockBookHubs;
+export function getBookHubs(): BookHubCourseGroup[] {
+  return getMockBookHubs();
 }
 
 export function getAnnouncements(): Announcement[] {

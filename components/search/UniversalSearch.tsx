@@ -23,23 +23,6 @@ interface EventResult {
   type: string;
 }
 
-interface ResourceResult {
-  _id: string;
-  title: string;
-  description?: string;
-  type: string;
-  downloadCount?: number;
-}
-
-interface BookResult {
-  _id: string;
-  title: string;
-  description?: string;
-  author: string;
-  availableCopies: number;
-  totalCopies: number;
-}
-
 interface TicketResult {
   _id: string;
   title: string;
@@ -114,54 +97,6 @@ export function UniversalSearch({ collegeId, clerkUserId, onClose }: UniversalSe
         }
       }
 
-      if (!selectedCategory || selectedCategory === "resources") {
-        const resourcesRes = await fetch("/api/search/resources", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ collegeId, clerkUserId, searchTerm: query }),
-        });
-        if (resourcesRes.ok) {
-          const resources: ResourceResult[] = await resourcesRes.json();
-          resources.forEach((resource) => {
-            if (resource.title.toLowerCase().includes(lowerQuery) ||
-                resource.description?.toLowerCase().includes(lowerQuery)) {
-              searchResults.push({
-                id: resource._id,
-                type: "resource",
-                title: resource.title,
-                description: resource.description,
-                subtitle: resource.type,
-                metadata: { downloadCount: resource.downloadCount },
-              });
-            }
-          });
-        }
-      }
-
-      if (!selectedCategory || selectedCategory === "books") {
-        const booksRes = await fetch("/api/search/books", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ collegeId, clerkUserId, searchTerm: query }),
-        });
-        if (booksRes.ok) {
-          const books: BookResult[] = await booksRes.json();
-          books.forEach((book) => {
-            if (book.title.toLowerCase().includes(lowerQuery) ||
-                book.author?.toLowerCase().includes(lowerQuery)) {
-              searchResults.push({
-                id: book._id,
-                type: "book",
-                title: book.title,
-                description: book.description,
-                subtitle: `by ${book.author}`,
-                metadata: { availableCopies: book.availableCopies, totalCopies: book.totalCopies },
-              });
-            }
-          });
-        }
-      }
-
       if (!selectedCategory || selectedCategory === "tickets") {
         const ticketsRes = await fetch("/api/search/tickets", {
           method: "POST",
@@ -218,12 +153,6 @@ export function UniversalSearch({ collegeId, clerkUserId, onClose }: UniversalSe
       case "event":
         router.push(`/events/${result.id}`);
         break;
-      case "resource":
-        router.push(`/resources?id=${result.id}`);
-        break;
-      case "book":
-        router.push(`/library?id=${result.id}`);
-        break;
       case "ticket":
         router.push(`/tickets?id=${result.id}`);
         break;
@@ -235,8 +164,6 @@ export function UniversalSearch({ collegeId, clerkUserId, onClose }: UniversalSe
   const categories = [
     { id: null, label: "All" },
     { id: "events", label: "Events" },
-    { id: "resources", label: "Resources" },
-    { id: "books", label: "Books" },
     { id: "tickets", label: "Tickets" },
   ];
 
@@ -249,7 +176,7 @@ export function UniversalSearch({ collegeId, clerkUserId, onClose }: UniversalSe
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search events, resources, books, tickets..."
+          placeholder="Search events and tickets..."
           className="w-full pl-12 pr-10 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400"
         />
         {query && (

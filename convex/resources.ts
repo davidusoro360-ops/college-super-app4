@@ -16,11 +16,24 @@ export const create = mutation({
     ),
     url: v.string(),
     courseId: v.optional(v.id("courses")),
+    bookId: v.optional(v.id("books")),
+    fileType: v.optional(v.string()),
     collegeId: v.id("colleges"),
     tags: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
     const userId = requireAuth(await getAuth(ctx, args.clerkUserId));
+
+    if (args.bookId) {
+      const book = await ctx.db.get(args.bookId);
+      if (!book) {
+        throw new Error("Book not found");
+      }
+      if (book.collegeId !== args.collegeId) {
+        throw new Error("Resource and book must belong to the same college");
+      }
+    }
+
     const now = Date.now();
     
     const resourceId = await ctx.db.insert("resources", {
@@ -29,6 +42,8 @@ export const create = mutation({
       type: args.type,
       url: args.url,
       courseId: args.courseId,
+      bookId: args.bookId,
+      fileType: args.fileType,
       uploadedBy: userId,
       collegeId: args.collegeId,
       tags: args.tags,
@@ -155,6 +170,8 @@ export const update = mutation({
       v.literal("other")
     )),
     url: v.optional(v.string()),
+    bookId: v.optional(v.id("books")),
+    fileType: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
@@ -172,12 +189,24 @@ export const update = mutation({
     if (!isOwner && !isStaff) {
       throw new Error("Not authorized to update this resource");
     }
+
+    if (args.bookId) {
+      const book = await ctx.db.get(args.bookId);
+      if (!book) {
+        throw new Error("Book not found");
+      }
+      if (book.collegeId !== resource.collegeId) {
+        throw new Error("Resource and book must belong to the same college");
+      }
+    }
     
     const updates: Record<string, unknown> = {};
     if (args.title !== undefined) updates.title = args.title;
     if (args.description !== undefined) updates.description = args.description;
     if (args.type !== undefined) updates.type = args.type;
     if (args.url !== undefined) updates.url = args.url;
+    if (args.bookId !== undefined) updates.bookId = args.bookId;
+    if (args.fileType !== undefined) updates.fileType = args.fileType;
     if (args.tags !== undefined) updates.tags = args.tags;
     
     await ctx.db.patch(args.resourceId, updates);

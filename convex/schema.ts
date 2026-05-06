@@ -159,7 +159,9 @@ export default defineSchema({
       v.literal("other")
     ),
     url: v.string(),
+    fileType: v.optional(v.string()),
     courseId: v.optional(v.id("courses")),
+    bookId: v.optional(v.id("books")),
     uploadedBy: v.id("users"),
     collegeId: v.id("colleges"),
     tags: v.optional(v.array(v.string())),
@@ -168,8 +170,10 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index("by_courseId", ["courseId"])
+    .index("by_bookId", ["bookId"])
     .index("by_uploadedBy", ["uploadedBy"])
     .index("by_collegeId", ["collegeId"])
+    .index("by_collegeId_bookId", ["collegeId", "bookId"])
     .index("by_collegeId_type", ["collegeId", "type"])
     .searchIndex("search_resources", {
       searchField: "title",
@@ -440,6 +444,8 @@ export default defineSchema({
   books: defineTable({
     title: v.string(),
     author: v.string(),
+    coverUrl: v.optional(v.string()),
+    courseId: v.optional(v.id("courses")),
     isbn: v.optional(v.string()),
     collegeId: v.id("colleges"),
     category: v.optional(v.string()),
@@ -454,7 +460,9 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index("by_collegeId", ["collegeId"])
+    .index("by_courseId", ["courseId"])
     .index("by_collegeId_category", ["collegeId", "category"])
+    .index("by_collegeId_courseId", ["collegeId", "courseId"])
     .searchIndex("search_books", {
       searchField: "title",
       filterFields: ["collegeId", "category"],
